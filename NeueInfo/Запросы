@@ -1,0 +1,106 @@
+from news.models import *
+
+Добавить Юзверя
+User.objects.create_user("Джимми") - Пользователь
+User.objects.create_user("Билли") - Пользователь
+User.objects.create_user("Сьюзи") - Пользователь
+
+
+Юзера привязать к автору
+x=User.objects.get(username='Billi')
+Author.objects.create(full_name='Шериф Эл-Пасо', e_mail='Paso@luisiana.csa',id_users_id=x.id)
+
+y=User.objects.get(username="James")
+Author.objects.create(full_name="Маршал Литл-Рок", e_mail="Little_rock@texas.csa",id_users_id=y.id)
+
+Категории категорий
+Category.objects.create(name="Новости штата")
+Category.objects.create(name="Экономика")
+Category.objects.create(name="Спорт")
+Category.objects.create(name="Политика")
+
+Статьи 
+
+Post.objects.create(head_article="Поезд Биг Спрингс", text_post="Прошлой осенью два лихих ковбоя, Сэм Коллинз и Джон Басс решили, что работенка погонщиков наскучила им и решили ограбить поезд на Биг Спрингс. Добравшись до будки смотрителя на полустанке Литл Спрингс они перерезали телеграфную линию и взяли смотрителя в плен. В почтовом вагоне вскрыв сейф их добычею стали 12000$. Грабители скрылись без единого выстрела и не найдены по сей день. ",type_post='article', id_author_id=2)
+
+Post.objects.create(head_article="О поведении в дилижансе", text_post="Что-бы сохранить дружеские отношения между пассажирами во время долгого путешествия, транспортная компания Билли Бонс распечатала и прикрепила в каждом салоне дилижанса свод правил дорожного этикета.",type_post='article', id_author_id=1)
+
+Post.objects.create(head_article="Сезонная миграция", text_post="В результате неурожая бобовых культур в эти выходные ожидается массовая миграция жуков короедов. Спутник Юпитера Ганимед находится в перигее, в связи с этим жуки будут в этот раз особенно злые. Добрым гражданам Литл-Рок рекомендую запастись на выходные виски и сигарами, так же воздержаться от романтических прогулок по пустыне. ",type_post='article', id_author_id=2)
+
+
+
+
+Добавление разделов к публикации через переменные
+cat1=Category.objects.get(id=1)
+cat2=Category.objects.get(id=2)
+cat3=Category.objects.get(id=3)
+cat4=Category.objects.get(id=4)
+
+post1=Post.objects.get(id=1)
+post2=Post.objects.get(id=2)
+post3=Post.objects.get(id=3)
+
+
+post1.category.add(cat2)
+post1.category.add(cat3)
+
+post2.category.add(cat1)
+post2.category.add(cat4)
+
+post3.category.add(cat1)
+post3.category.add(cat2)
+
+
+
+проверка метода лайков
+post1=Post.objects.get(id=1)
+post1.like()
+post1.like()
+post1.sum_rank
+post1.preview()
+
+
+Создание комментариев
+user1=User.objects.get(id=4)
+user2=User.objects.get(id=5)
+user3=User.objects.get(id=6)
+
+
+Comments.objects.create(id_post=post3, text="Пора опять дедов самогонный аппарат доставать.", id_users=user1)
+Comments.objects.create(id_post=post3, text="В салуне Фрэнка будет аншлаг", id_users=user2)
+
+Comments.objects.create(id_post=post1, text="Вот негодяи таких ленчевать нужно на первом дереве. Добрых людей грабят.", id_users=user3)
+Comments.objects.create(id_post=post1, text="В поезде не было славных горожан из Эль-Пасо, Сэм вернется домой и его старушка Мэри не будет в старости иметь нужды.", id_users=user2)
+
+Comments.objects.create(id_post=post2, text="Давно пора, Джентельмены ведут себя иногда выльгарно", id_users=user3)
+Comments.objects.create(id_post=post2, text="Эх... добрый были времена. Сейчас с собой в дорогу даже револьвер не дают взять.", id_users=user1)
+Comments.objects.create(id_post=post2, text="Воздержитесь от виски или поделитесь?! Я не в церкви, что бы делить трапезу с каждым проходимцем.", id_users=user2)
+
+
+
+Добавить лайк
+lk=Comments.objects.get(id=8)
+lk.like()
+lk.sum_rank
+
+
+Рейтинг лучшего пользователя.
+lk=Author.objects.order_by('-rank').first()
+lk.id_users.username
+lk.rank
+
+Author.objects.order_by('-rank').values('id_users__username','rank')[0] 
+
+Дата, имя автора, рейтинг 
+lk=Post.objects.order_by('-sum_rank').first()
+lk.preview()
+lk.head_article
+lk.date.strftime("%Y-%m-%d-%H.%M.%S")
+lk.id_author.id_users.username
+
+
+Вывести все комментарии к статье.
+Comments.objects.filter(id_post=lk.id).values('text','id_users__username','date','sum_rank',)
+
+КОНЕЦ
+
